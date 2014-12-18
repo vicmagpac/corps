@@ -9,6 +9,8 @@
 
 namespace Tropa\Controller;
 
+use Tropa\Form\SetorForm;
+use Tropa\Model\Setor;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\View\Model\ViewModel;
 
@@ -18,17 +20,63 @@ class SetorController extends AbstractActionController
 
     public function indexAction()
     {
-        return new ViewModel();
+        $setores = array(
+            'setores' => $this->getSetorTable()->fetchAll()
+        );
+
+        return new ViewModel($setores);
     }
 
     public function addAction()
     {
+        $form = new SetorForm();
+        $form->get('submit')->setValue('Cadastrar');
+        $request = $this->getRequest();
 
+        if ($request->isPost()) {
+            $setor = new Setor();
+            $form->setInputFilter($setor->getInputFIlter());
+            $form->setData($request->getPost());
+
+            if ($form->isValid()) {
+                $setor->exchangeArray($form->getData());
+                $this->getSetorTable()->saveSetor($setor);
+
+                return $this->redirect()->toRoute('setor');
+            }
+        }
+
+        return array('form' => $form);
     }
 
     public function editAction()
     {
+        $codigo = (int) $this->params()->fromRoute('codigo', null);
+        if (is_null($codigo)) {
+            return $this->redirect()->toRoute('setor', array('action' => 'add'));
+        }
 
+        $setor = $this->getSetorTable()->getSetor($codigo);
+        $form = new SetorForm();
+        $form->bind($setor);
+        $form->get('submit')->setAttribute('value', 'Editar');
+
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $form->setInputFilter($setor->getInputFilter());
+            $form->setData($request->getPost());
+
+            if ($form->isValid()) {
+                $this->getSetorTable()->saveSetor($form->getData());
+
+                return $this->redirect()->toRoute('setor');
+            }
+        }
+
+        return array(
+            'codigo'    => $codigo,
+            'form'      => $form
+        );
     }
 
     public function deleteAction()
@@ -36,7 +84,10 @@ class SetorController extends AbstractActionController
 
     }
 
-    public function getSetorController()
+    /**
+     * @return \Tropa\Model\SetorTable
+     */
+    public function getSetorTable()
     {
         if (!$this->setorTable) {
             $sm = $this->getServiceLocator();
