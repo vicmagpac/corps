@@ -81,7 +81,28 @@ class SetorController extends AbstractActionController
 
     public function deleteAction()
     {
+        $codigo = (int) $this->params()->fromRoute('codigo', null);
+        if (is_null($codigo)) {
+            return $this->redirect()->toRoute('setor');
+        }
 
+        $request = $this->getRequest();
+        if ($request->isPost()) {
+            $del = $request->getPost('del', 'Nao');
+
+            if ($del == 'Sim') {
+                $this->getSetorTable()->deleteSetor($codigo);
+            }
+
+            return $this->redirect()->toRoute('setor');
+        }
+
+        $form = new SetorForm();
+
+        return array(
+            'codigo' => $codigo,
+            'form'   => $form->getDeleteForm($codigo)
+        );
     }
 
     /**

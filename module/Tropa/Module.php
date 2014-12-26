@@ -9,12 +9,15 @@
 
 namespace Tropa;
 
+use Tropa\Model\Lanterna;
+use Tropa\Model\LanternaTable;
 use Tropa\Model\Setor;
 use Tropa\Model\SetorTable;
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Mvc\ModuleRouteListener;
 use Zend\Mvc\MvcEvent;
+use Zend\Validator\AbstractValidator;
 
 class Module
 {
@@ -23,6 +26,15 @@ class Module
         $eventManager        = $e->getApplication()->getEventManager();
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($eventManager);
+
+        $translator = $e->getApplication()->getServiceManager()->get('MvcTranslator');
+        $translator->addTranslationFile(
+            'phpArray',
+            'vendor/zendframework/zendframework/resources/languages/pt_BR/Zend_Validate.php'
+        );
+        AbstractValidator::setDefaultTranslator($translator);
+
+        $GLOBALS['sm'] = $e->getApplication()->getServiceManager();
     }
 
     public function getConfig()
@@ -45,10 +57,21 @@ class Module
     {
         return array(
             'factories' => array(
+                'Tropa\Model\LanternaTable' => function($sm) {
+                    $tableGateway = $sm->get('LanternaTableGateway');
+                    $table = new LanternaTable($tableGateway);
+                    return $table;
+                },
                 'Tropa\Model\SetorTable' => function($sm) {
                     $tableGateway = $sm->get('SetorTableGateway');
                     $table = new SetorTable($tableGateway);
                     return $table;
+                },
+                'LanternaTableGateway' => function($sm) {
+                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
+                    $resultSetPrototype = new ResultSet();
+                    $resultSetPrototype->setArrayObjectPrototype(new Lanterna());
+                    return new TableGateway('lanterna', $dbAdapter, null, $resultSetPrototype);
                 },
                 'SetorTableGateway' => function($sm) {
                     $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');

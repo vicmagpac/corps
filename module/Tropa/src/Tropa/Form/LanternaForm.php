@@ -4,36 +4,41 @@ namespace Tropa\Form;
 
 use Zend\Form\Form;
 
-class SetorForm extends Form
+class LanternaForm extends Form
 {
+    protected $setorTable;
+
     public function __construct($name = null)
     {
-        parent::__construct('setor');
+        parent::__construct('lanterna');
         $this->setAttribute('method', 'post');
 
+
         $this->add(array(
-            'name'          => 'codigo',
-            'attributes'    => array(
-                'type' => 'text'
-            ),
-            'options' => array(
-                'label' => 'Código'
-            )
+            'name' => 'codigo',
+            'type' => 'hidden'
         ));
 
         $this->add(array(
-            'name'          => 'nome',
-            'attributes'    => array(
-                'type' => 'text'
-            ),
+            'name' => 'nome',
+            'type' => 'text',
             'options' => array(
                 'label' => 'Nome'
             )
         ));
 
         $this->add(array(
-           'name'           => 'submit',
-            'attributes'    => array(
+           'name' => 'codigo_setor',
+           'type' => 'select',
+            'options' => array(
+                'label' => 'Setor',
+                'value_options' => $this->getValueOptions()
+            )
+        ));
+
+        $this->add(array(
+            'name' => 'submit',
+            'attributes' => array(
                 'type'  => 'submit',
                 'value' => 'Gravar',
                 'id'    => 'submitbutton'
@@ -45,6 +50,7 @@ class SetorForm extends Form
     {
         $this->remove('codigo');
         $this->remove('nome');
+        $this->remove('codigo_setor');
         $this->remove('submit');
 
         $this->add(array(
@@ -66,5 +72,26 @@ class SetorForm extends Form
         ));
 
         return $this;
+    }
+
+    private function getSetorTable()
+    {
+        if (!$this->setorTable) {
+            $sm = $GLOBALS['sm'];
+            $this->setorTable = $sm->get('Tropa\Model\SetorTable');
+        }
+        return $this->setorTable;
+    }
+
+    private function getValueOptions()
+    {
+        $valueOptions = array();
+        $setores = $this->getSetorTable()->fetchAll();
+
+        foreach ($setores as $setor) {
+            $valueOptions[$setor->codigo] = $setor->nome;
+        }
+
+        return $valueOptions;
     }
 }

@@ -1,16 +1,11 @@
 <?php
-    $title = 'Remover setor';
+    $title = 'Remover lanterna';
     $this->headTitle($title);
 ?>
-
 <h1><?php echo $this->escapeHtml($title) ?></h1>
-
 <?php
     $form = $this->form;
-    $form->setAttribute('action', $this->url('setor', array(
-        'action' => 'delete',
-        'codigo' => $codigo
-    )));
+    $form->setAttribute('action', $this->url('lanterna', array('action' => 'delete', 'codigo' => $codigo)));
     $form->prepare();
 
     echo $this->form()->openTag($form);

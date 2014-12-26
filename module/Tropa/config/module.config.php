@@ -10,6 +10,16 @@
 return array(
     'router' => array(
         'routes' => array(
+            'lanterna' => array(
+                'type' => 'segment',
+                'options' => array(
+                    'route' => '/lanterna[/:action][/:codigo][/]',
+                    'defaults' => array(
+                        'controller' => 'Tropa\Controller\Lanterna',
+                        'action'     => 'index'
+                    )
+                )
+            ),
             'setor' => array(
                 'type'      => 'segment',
                 'options'   => array(
@@ -43,7 +53,8 @@ return array(
     ),
     'controllers' => array(
         'invokables' => array(
-            'Tropa\Controller\Setor' => 'Tropa\Controller\SetorController'
+            'Tropa\Controller\Lanterna' => 'Tropa\Controller\LanternaController',
+            'Tropa\Controller\Setor'    => 'Tropa\Controller\SetorController'
         ),
     ),
     'view_manager' => array(
