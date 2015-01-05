@@ -1,10 +1,6 @@
-<?php
-$title = 'Lanternas verdes';
-$this->headTitle($title);
-?>
-<h1><?php echo $this->escapeHtml($title) ?></h1>
+<h1><?php echo $this->escapeHtml($this->title) ?></h1>
 <p>
-    <a href="<?php echo $this->url('lanterna', array('action' => 'add')) ?>">Novo lanterna</a>
+    <a href="<?php echo $this->urlAdd ?>">Novo lanterna</a>
 </p>
 <table class="table">
     <tr>
@@ -13,15 +9,13 @@ $this->headTitle($title);
         <th>Setor</th>
         <th>&nbsp;</th>
     </tr>
-    <?php foreach ($this->lanternas as $lanterna): ?>
-    <tr>
-        <td><?php echo $lanterna->codigo; ?></td>
-        <td><?php echo $this->escapeHtml($lanterna->nome); ?></td>
-        <td><?php echo $this->escapeHtml($lanterna->setor->nome); ?></td>
-        <td>
-            <a href="<?php echo $this->url('lanterna', array('action' => 'edit', 'codigo' => $lanterna->codigo)) ?>">Editar</a> |
-            <a href="<?php echo $this->url('lanterna', array('action' => 'delete', 'codigo' => $lanterna->codigo)) ?>">Excluir</a>
-        </td>
-    </tr>
-    <?php endforeach; ?>
+    <?php echo $this->partialLoop('lanternas.phtml', $this->paginator) ?>
 </table>
+<p>
+    <?php
+        echo $this->paginationControl($this->paginator, 'Sliding', 'pagination', array('route' => 'setor'));
+    ?>
+</p>
+<p>
+    <a href="<?php echo $this->urlHomepage ?>">Homepage</a>
+</p>

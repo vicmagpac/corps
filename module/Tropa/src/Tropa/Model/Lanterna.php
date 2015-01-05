@@ -76,4 +76,9 @@ class Lanterna
             'codigo_setor' => $this->setor->codigo
         );
     }
+
+    public function toArray()
+    {
+        return get_object_vars($this);
+    }
 }

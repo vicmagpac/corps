@@ -12,6 +12,8 @@ namespace Tropa\Controller;
 use Tropa\Form\SetorForm;
 use Tropa\Model\Setor;
 use Zend\Mvc\Controller\AbstractActionController;
+use Zend\Paginator\Adapter\DbSelect;
+use Zend\Paginator\Paginator;
 use Zend\View\Model\ViewModel;
 
 class SetorController extends AbstractActionController
@@ -20,8 +22,28 @@ class SetorController extends AbstractActionController
 
     public function indexAction()
     {
+        $partialLoop = $this->getSm()->get('viewhelpermanager')->get('PartialLoop');
+        $partialLoop->setObjectKey('setor');
+
+        $urlAdd = $this->url()->fromRoute('setor', array('action' => 'add'));
+        $urlEdit = $this->url()->fromRoute('setor', array('action' => 'edit'));
+        $urlDelete = $this->url()->fromRoute('setor', array('action' => 'delete'));
+        $urlHomePage = $this->url()->fromRoute('home');
+
+        $placeholder = $this->getSm()->get('viewhelpermanager')->get('Placeholder');
+        $placeholder('url')->edit = $urlEdit;
+        $placeholder('url')->delete = $urlDelete;
+
+        $pageAdapter = new DbSelect($this->getSetorTable()->getSelect(), $this->getSetorTable()->getSql());
+        $paginator = new Paginator($pageAdapter);
+        $paginator->setCurrentPageNumber($this->params()->fromRoute('page', 1));
+        $paginator->setItemCountPerPage(2);
+
         $setores = array(
-            'setores' => $this->getSetorTable()->fetchAll()
+            'paginator' => $paginator,
+            'title'   => $this->setAndGetTitle(),
+            'urlAdd'  => $urlAdd,
+            'urlHomePage' => $urlHomePage
         );
 
         return new ViewModel($setores);
@@ -46,7 +68,10 @@ class SetorController extends AbstractActionController
             }
         }
 
-        return array('form' => $form);
+        return array(
+            'form'  => $form,
+            'title' => $this->setAndGetTitle()
+        );
     }
 
     public function editAction()
@@ -75,7 +100,8 @@ class SetorController extends AbstractActionController
 
         return array(
             'codigo'    => $codigo,
-            'form'      => $form
+            'form'      => $form,
+            'title'     => $this->setAndGetTitle()
         );
     }
 
@@ -101,7 +127,8 @@ class SetorController extends AbstractActionController
 
         return array(
             'codigo' => $codigo,
-            'form'   => $form->getDeleteForm($codigo)
+            'form'   => $form->getDeleteForm($codigo),
+            'title'  => $this->setAndGetTitle()
         );
     }
 
@@ -116,5 +143,18 @@ class SetorController extends AbstractActionController
         }
 
         return $this->setorTable;
+    }
+
+    private function getSm()
+    {
+        return $this->getEvent()->getApplication()->getServiceManager();
+    }
+
+    private function setAndGetTitle()
+    {
+        $title = 'Setores';
+        $headTitle = $this->getSm()->get('viewhelpermanager')->get('HeadTitle');
+        $headTitle($title);
+        return $title;
     }
 }

@@ -5,6 +5,8 @@ namespace Tropa\Controller;
 use Tropa\Form\LanternaForm;
 use Tropa\Model\Lanterna;
 use Zend\Mvc\Controller\AbstractActionController;
+use Zend\Paginator\Adapter\DbSelect;
+use Zend\Paginator\Paginator;
 use Zend\View\Model\ViewModel;
 
 class LanternaController extends AbstractActionController
@@ -13,8 +15,28 @@ class LanternaController extends AbstractActionController
 
     public function indexAction()
     {
+        $partialLoop = $this->getSm()->get('viewhelpermanager')->get('PartialLoop');
+        $partialLoop->setObjectKey('lanterna');
+
+        $urlAdd = $this->url()->fromRoute('lanterna', array('action' => 'add'));
+        $urlEdit = $this->url()->fromRoute('lanterna', array('action' => 'edit'));
+        $urlDelete = $this->url()->fromRoute('lanterna', array('action' => 'delete'));
+        $urlHomepage = $this->url()->fromRoute('home');
+
+        $placeholder = $this->getSm()->get('viewhelpermanager')->get('Placeholder');
+        $placeholder('url')->edit = $urlEdit;
+        $placeholder('url')->delete = $urlDelete;
+
+        $pageAdapter = new DbSelect($this->getLanternaTable()->getSelect(), $this->getLanternaTable()->getSql());
+        $paginator = new Paginator($pageAdapter);
+        $paginator->setCurrentPageNumber($this->params()->fromRoute('page', 1));
+        $paginator->setItemCountPerPage(2);
+
         return new ViewModel(array(
-            'lanternas' => $this->getLanternaTable()->fetchAll()
+            'paginator' => $paginator,
+            'title'     => $this->setAndGetTitle(),
+            'urlAdd'    => $urlAdd,
+            'urlHomepage' => $urlHomepage
         ));
     }
 
@@ -37,7 +59,10 @@ class LanternaController extends AbstractActionController
             }
         }
 
-        return array('form' => $form);
+        return array(
+            'form' => $form,
+            'title' => $this->setAndGetTitle()
+        );
     }
 
     public function editAction()
@@ -67,7 +92,8 @@ class LanternaController extends AbstractActionController
 
         return array(
             'codigo' => $codigo,
-            'form'   => $form
+            'form'   => $form,
+            'title' => $this->setAndGetTitle()
         );
     }
 
@@ -93,7 +119,8 @@ class LanternaController extends AbstractActionController
 
         return array(
             'codigo' => $codigo,
-            'form'   => $form->getDeleteForm($codigo)
+            'form'   => $form->getDeleteForm($codigo),
+            'title' => $this->setAndGetTitle()
         );
     }
 
@@ -108,5 +135,18 @@ class LanternaController extends AbstractActionController
         }
 
         return $this->lanternaTable;
+    }
+
+    public function getSm()
+    {
+        return $this->getEvent()->getApplication()->getServiceManager();
+    }
+
+    public function setAndGetTitle()
+    {
+        $title = 'Lanternas verdes';
+        $headTitle = $this->getSm()->get('viewhelpermanager')->get('HeadTitle');
+        $headTitle($title);
+        return $title;
     }
 }

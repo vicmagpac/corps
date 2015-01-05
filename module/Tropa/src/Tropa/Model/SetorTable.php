@@ -5,6 +5,7 @@ namespace Tropa\Model;
 use Zend\Db\TableGateway\TableGateway;
 use Zend\Db\Adapter\Adapter;
 use Zend\Db\ResultSet\ResultSet;
+use Zend\Db\Sql\Select;
 
 class SetorTable
 {
@@ -48,5 +49,16 @@ class SetorTable
     public function deleteSetor($codigo)
     {
         $this->tableGateway->delete(array('codigo' => $codigo));
+    }
+
+    public function getSql()
+    {
+        return $this->tableGateway->getSql();
+    }
+
+    public function getSelect()
+    {
+        $select = new Select($this->tableGateway->getTable());
+        return $select;
     }
 }

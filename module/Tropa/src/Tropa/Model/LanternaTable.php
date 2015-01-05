@@ -61,4 +61,19 @@ class LanternaTable
     {
         $this->tableGateway->delete(array('codigo' => $codigo));
     }
+
+    public function getSql()
+    {
+        return $this->tableGateway->getSql();
+    }
+
+    public function getSelect()
+    {
+        $select = new Select();
+        $select->from('lanterna')
+               ->columns(array('codigo','nome','codigo_setor'))
+               ->join(array('s'=>'setor'), 'lanterna.codigo_setor = s.codigo', array('setor'=>'nome'));
+
+        return $select;
+    }
 }

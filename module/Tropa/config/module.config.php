@@ -13,20 +13,24 @@ return array(
             'lanterna' => array(
                 'type' => 'segment',
                 'options' => array(
-                    'route' => '/lanterna[/:action][/:codigo][/]',
+                    'route' => '/lanterna[/][/:action][/:codigo][page/:page]',
                     'defaults' => array(
                         'controller' => 'Tropa\Controller\Lanterna',
-                        'action'     => 'index'
+                        'action'     => 'index',
+                        'codigo'     => null,
+                        'page'       => 1
                     )
                 )
             ),
             'setor' => array(
                 'type'      => 'segment',
                 'options'   => array(
-                    'route'     => '/setor[/:action][/:codigo][/]',
+                    'route'     => '/setor[/][/:action][/:codigo][page/:page]',
                     'defaults'  => array(
                         'controller' => 'Tropa\Controller\Setor',
-                        'action'     => 'index'
+                        'action'     => 'index',
+                        'codigo'     => null,
+                        'page'       => 1
                     )
                 )
             )

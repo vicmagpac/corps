@@ -19,7 +19,34 @@ return array(
     ),
     'service_manager' => array(
         'factories' => array(
-            'Zend\Db\Adapter\Adapter' => 'Zend\Db\Adapter\AdapterServiceFactory'
+            'Zend\Db\Adapter\Adapter' => 'Zend\Db\Adapter\AdapterServiceFactory',
+            'Navigation'              => 'Zend\Navigation\Service\DefaultNavigationFactory'
+        )
+    ),
+    'navigation' => array(
+        'default' => array(
+            array(
+                'label' => 'Setores Espaciais',
+                'route' => 'setor',
+                'pages' => array(
+                    array(
+                        'label' => 'Incluir',
+                        'route' => 'setor',
+                        'action' => 'add'
+                    )
+                )
+            ),
+            array(
+                'label' => 'Lanternas verdes',
+                'route' => 'lanterna',
+                'pages' => array(
+                    array(
+                        'label' => 'Incluir',
+                        'route' => 'lanterna',
+                        'action' => 'add'
+                    )
+                )
+            )
         )
     )
 );
