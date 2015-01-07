@@ -2,10 +2,15 @@
 
 namespace Tropa\Model;
 
-use Zend\InputFilter\Factory as InputFactory;
-use Zend\InputFilter\InputFilter;
+use Fgsl\Model\AbstractModel;
+use Fgsl\InputFilter\InputFilter;
+use Zend\Filter\Int;
+use Zend\Filter\StringTrim;
+use Zend\Filter\StripTags;
+use Zend\Validator\StringLength;
+use Zend\Validator\Digits;
 
-class Lanterna
+class Lanterna extends AbstractModel
 {
     public $codigo;
     public $nome;
@@ -16,7 +21,7 @@ class Lanterna
 
     protected $inputFilter;
 
-    public function exchangeArray($data)
+    public function exchangeArray(array $data)
     {
         $this->codigo           = (isset($data['codigo'])) ? $data['codigo'] : null;
         $this->nome             = (isset($data['nome'])) ? $data['nome'] : null;
@@ -29,56 +34,24 @@ class Lanterna
     {
         if (!$this->inputFilter) {
             $inputFilter = new InputFilter();
-            $factory = new InputFactory();
-
-            $inputFilter->add($factory->createInput(array(
-                'name' => 'nome',
-                'required' => true,
-                'filters' => array(
-                    array('name' => 'StripTags'),
-                    array('name' => 'StringTrim')
-                ),
-                'validators' => array(
-                    array(
-                        'name' => 'StringLength',
-                        'options' => array(
-                            'encoding'  => 'UTF-8',
-                            'min'       => 2,
-                            'max'       => 30
-                        )
-                    )
-                )
+            $inputFilter->addFilter('nome', new StripTags());
+            $inputFilter->addFilter('nome', new StringTrim());
+            $inputFilter->addValidator('nome', new StringLength(array(
+                'encoding'  => 'UTF-8',
+                'min'       => 2,
+                'max'       => 30
             )));
 
-            $inputFilter->add($factory->createInput(array(
-                'name'      => 'codigo_setor',
-                'required'  => true,
-                'filters'   => array(
-                    array('name' => 'Int')
-                ),
-                'validators' => array(
-                    array(
-                        'name' => 'Digits'
-                    )
-                )
-            )));
+            $inputFilter->addFilter('codigo_setor', new Int());
+            $inputFilter->addValidator('codigo_setor', new Digits());
+
+            $inputFilter->addChains();
+
             $this->inputFilter = $inputFilter;
         }
 
         return $this->inputFilter;
     }
 
-    public function getArrayCopy()
-    {
-        return array(
-            'codigo' => $this->codigo,
-            'nome'   => $this->nome,
-            'codigo_setor' => $this->setor->codigo
-        );
-    }
 
-    public function toArray()
-    {
-        return get_object_vars($this);
-    }
 }

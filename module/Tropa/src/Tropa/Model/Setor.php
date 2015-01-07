@@ -2,17 +2,22 @@
 
 namespace Tropa\Model;
 
-use Zend\InputFilter\Factory as InputFactory;
-use Zend\InputFilter\InputFilter;
+use Fgsl\InputFilter\InputFilter;
+use Fgsl\Model\AbstractModel;
+use Zend\Filter\Int;
+use Zend\Filter\StringTrim;
+use Zend\Filter\StripTags;
+use Zend\Validator\Between;
+use Zend\Validator\StringLength;
 
-class Setor
+class Setor extends AbstractModel
 {
     public $codigo;
     public $nome;
 
     protected $inputFilter;
 
-    public function exchangeArray($data)
+    public function exchangeArray(array $data)
     {
         $this->codigo   = (isset($data['codigo'])) ? $data['codigo'] : null;
         $this->nome     = (isset($data['nome'])) ? $data['nome'] : null;
@@ -22,42 +27,18 @@ class Setor
     {
         if (!$this->inputFilter) {
             $inputFilter = new InputFilter();
-            $factory = new InputFactory();
-
-            $inputFilter->add($factory->createInput(array(
-                'name'      => 'codigo',
-                'required'  => false,
-                'filters'   => array(
-                    array('name' => 'Int')
-                ),
-                'validators' => array(
-                    array(
-                        'name'      => 'Between',
-                        'options'   => array(
-                            'min' => 0,
-                            'max' => 3600
-                        )
-                    )
-                )
+            $inputFilter->addFilter('codigo', new Int());
+            $inputFilter->addValidator('codigo', new Between(array(
+                'min' => 0,
+                'max' => 3600
             )));
 
-            $inputFilter->add($factory->createInput(array(
-                'name'      => 'nome',
-                'required'  => true,
-                'filters'   => array(
-                    array('name' => 'StripTags'),
-                    array('name' => 'StringTrim')
-                ),
-                'validators' => array(
-                    array(
-                        'name'      => 'StringLength',
-                        'options'   => array(
-                            'encoding'  => 'UTF-8',
-                            'min'       => 2,
-                            'max'       => 30
-                        )
-                    )
-                )
+            $inputFilter->addFilter('nome', new StripTags());
+            $inputFilter->addFilter('nome', new StringTrim());
+            $inputFilter->addValidator('nome', new StringLength(array(
+                'encoding' => 'UTF-8',
+                'min'      => 2,
+                'max'      => 30
             )));
 
             $this->inputFilter = $inputFilter;

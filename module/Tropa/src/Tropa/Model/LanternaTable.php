@@ -2,70 +2,36 @@
 
 namespace Tropa\Model;
 
+use Fgsl\Db\TableGateway\AbstractTableGateway;
+use Fgsl\Model\AbstractModel;
 use Zend\Db\Sql\Select;
-use Zend\Db\TableGateway\TableGateway;
-use Zend\Db\Adapter\Adapter;
-use Zend\Db\ResultSet\ResultSet;
 
-class LanternaTable
+class LanternaTable extends AbstractTableGateway
 {
-    protected $tableGateway;
+    protected $primaryKey = 'codigo';
 
-    public function __construct(TableGateway $tableGateway)
-    {
-        $this->tableGateway = $tableGateway;
-    }
-
-    public function fetchAll()
-    {
-        $select = new Select();
-        $select->from('lanterna')
-               ->columns(array('codigo', 'nome'))
-               ->join(array('s' => 'setor'), 'lanterna.codigo_setor = s.codigo', array('setor' => 'nome'));
-        $resultSet = $this->tableGateway->selectWith($select);
-        return $resultSet;
-    }
-
-    public function getLanterna($codigo)
+    public function get($codigo)
     {
         $codigo = (int) $codigo;
 
-        $select = new Select();
-        $select->from('lanterna')
-               ->columns(array('codigo', 'nome', 'codigo_setor'))
-               ->join(array('s' => 'setor'), 'lanterna.codigo_setor = s.codigo', array('setor' => 'nome'))
-               ->where(array('lanterna.codigo' => $codigo));
+        $select = $this->getSelect()
+                       ->where(array('lanterna.codigo' => $codigo));
+
         $rowset = $this->tableGateway->selectWith($select);
         $row = $rowset->current();
         return $row;
     }
 
-    public function saveLanterna(Lanterna $lanterna)
+    public function getData(AbstractModel $model)
     {
-
         $data = array(
-            'nome' => $lanterna->nome,
-            'codigo_setor' => $lanterna->setor->codigo
+            'nome' => $model->nome,
+            'codigo_setor' => $model->setor->codigo
         );
 
-        $codigo = $lanterna->codigo;
-        if (!$this->getLanterna($codigo)) {
-            $this->tableGateway->insert($data);
-        } else {
-            $this->tableGateway->update($data, array('codigo' => $codigo));
-        }
-
+        return $data;
     }
 
-    public function deleteLanterna($codigo)
-    {
-        $this->tableGateway->delete(array('codigo' => $codigo));
-    }
-
-    public function getSql()
-    {
-        return $this->tableGateway->getSql();
-    }
 
     public function getSelect()
     {

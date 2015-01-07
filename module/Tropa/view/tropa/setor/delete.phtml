@@ -7,10 +7,7 @@
 
 <?php
     $form = $this->form;
-    $form->setAttribute('action', $this->url('setor', array(
-        'action' => 'delete',
-        'codigo' => $codigo
-    )));
+    $form->setAttribute('action', $this->urlAction);
     $form->prepare();
 
     echo $this->form()->openTag($form);

@@ -48,6 +48,7 @@ class Module
             'Zend\Loader\StandardAutoloader' => array(
                 'namespaces' => array(
                     __NAMESPACE__ => __DIR__ . '/src/' . __NAMESPACE__,
+                    'Fgsl' => realpath(__DIR__ . '/../../vendor/fgslframework/fgslframework/library/Fgsl')
                 ),
             ),
         );

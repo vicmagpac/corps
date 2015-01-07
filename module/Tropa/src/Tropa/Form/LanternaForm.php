@@ -2,9 +2,9 @@
 
 namespace Tropa\Form;
 
-use Zend\Form\Form;
+use Fgsl\Form\AbstractForm;
 
-class LanternaForm extends Form
+class LanternaForm extends AbstractForm
 {
     protected $setorTable;
 
@@ -13,65 +13,12 @@ class LanternaForm extends Form
         parent::__construct('lanterna');
         $this->setAttribute('method', 'post');
 
+        $this->addElement('codigo', 'hidden');
+        $this->addElement('nome', 'text', 'Nome');
+        $options = array('value_options' => $this->getValueOptions());
+        $this->addElement('codigo_setor', 'select', 'Setor', array(), $options);
+        $this->addElement('submit', 'submit', 'Gravar');
 
-        $this->add(array(
-            'name' => 'codigo',
-            'type' => 'hidden'
-        ));
-
-        $this->add(array(
-            'name' => 'nome',
-            'type' => 'text',
-            'options' => array(
-                'label' => 'Nome'
-            )
-        ));
-
-        $this->add(array(
-           'name' => 'codigo_setor',
-           'type' => 'select',
-            'options' => array(
-                'label' => 'Setor',
-                'value_options' => $this->getValueOptions()
-            )
-        ));
-
-        $this->add(array(
-            'name' => 'submit',
-            'attributes' => array(
-                'type'  => 'submit',
-                'value' => 'Gravar',
-                'id'    => 'submitbutton'
-            )
-        ));
-    }
-
-    public function getDeleteForm($codigo)
-    {
-        $this->remove('codigo');
-        $this->remove('nome');
-        $this->remove('codigo_setor');
-        $this->remove('submit');
-
-        $this->add(array(
-            'name' => 'del',
-            'attributes' => array(
-                'type'  => 'submit',
-                'value' => 'Sim',
-                'id'    => 'del'
-            )
-        ));
-
-        $this->add(array(
-            'name' => 'return',
-            'attributes' => array(
-                'type'  => 'submit',
-                'value' => 'Não',
-                'id'    => 'return'
-            )
-        ));
-
-        return $this;
     }
 
     private function getSetorTable()

@@ -1,8 +1,8 @@
 <tr>
-    <td><?php echo $this->setor->codigo ?></td>
-    <td><?php echo $this->setor->nome ?></td>
+    <td><?php echo $this->model->codigo ?></td>
+    <td><?php echo $this->model->nome ?></td>
     <td>
-        <a href="<?php echo $this->placeholder('url')->edit . $this->setor->codigo ?>">Editar</a>
-        <a href="<?php echo $this->placeholder('url')->delete . $this->setor->codigo ?>">Remover</a>
+        <a href="<?php echo $this->placeholder('url')->edit . '/' . $this->model->codigo ?>">Editar</a>
+        <a href="<?php echo $this->placeholder('url')->delete . '/' . $this->model->codigo ?>">Remover</a>
     </td>
 </tr>
