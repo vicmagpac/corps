@@ -25,4 +25,12 @@ class SetorController extends AbstractCrudController
         $this->label['add']  = 'Incluir';
         $this->label['edit'] = 'Alterar';
     }
+
+    public function indexAction()
+    {
+        $viewModel = parent::indexAction();
+        $urlHomepage = $this->url()->fromRoute('application', array('controller' => 'index', 'action' => 'menu'));
+        $viewModel->setVariable('urlHomepage', $urlHomepage);
+        return $viewModel;
+    }
 }

@@ -46,6 +46,12 @@ return array(
                         'action' => 'add'
                     )
                 )
+            ),
+            array(
+                'label' => 'Sair',
+                'route' => 'application',
+                'controller' => 'index',
+                'action' => 'logout'
             )
         )
     )

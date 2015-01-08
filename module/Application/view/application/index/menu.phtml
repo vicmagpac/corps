@@ -1,0 +1,7 @@
+<?php
+$title = 'Cadastros';
+$this->headTitle($title);
+?>
+    <h1><?php echo $this->escapeHtml($title); ?></h1>
+    <p>Usuário: <?php echo $this->usuario->identidade; ?></p>
+<?php echo $this->navigation('Navigation')->menu() ?>

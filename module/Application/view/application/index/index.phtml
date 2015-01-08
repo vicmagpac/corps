@@ -1,6 +1,14 @@
 <?php
-    $title = 'Cadastros';
+    $title = 'Acesso ao sistema';
     $this->headTitle($title);
 ?>
 <h1><?php echo $this->escapeHtml($title); ?></h1>
-<?php echo $this->navigation('Navigation')->menu() ?>
+<p><?php echo $this->messages ?></p>
+<?php
+$form = $this->form;
+$form->prepare();
+
+echo $this->form()->openTag($form);
+echo $this->formCollection($this->form);
+echo $this->form()->closeTag();
+?>

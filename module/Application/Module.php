@@ -19,6 +19,8 @@ class Module
         $eventManager        = $e->getApplication()->getEventManager();
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($eventManager);
+
+        $eventManager->attach(MvcEvent::EVENT_ROUTE, array('Fgsl\Service\Authentication', 'verifyIdentity'));
     }
 
     public function getConfig()
