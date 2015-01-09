@@ -17,6 +17,11 @@ abstract class AbstractTableGateway
         $this->tableGateway = $tableGateway;
     }
 
+    public function __call($method, array $args)
+    {
+        return call_user_func(array($this->tableGateway, $method), $args);
+    }
+
     abstract protected function getData(AbstractModel $model);
 
     public function fetchAll()

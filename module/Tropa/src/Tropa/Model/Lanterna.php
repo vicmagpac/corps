@@ -12,23 +12,7 @@ use Zend\Validator\Digits;
 
 class Lanterna extends AbstractModel
 {
-    public $codigo;
-    public $nome;
-    /**
-     * @var \Tropa\Model\Setor
-     */
-    public $setor;
-
     protected $inputFilter;
-
-    public function exchangeArray(array $data)
-    {
-        $this->codigo           = (isset($data['codigo'])) ? $data['codigo'] : null;
-        $this->nome             = (isset($data['nome'])) ? $data['nome'] : null;
-        $this->setor            = new Setor();
-        $this->setor->codigo    = (isset($data['codigo_setor'])) ? $data['codigo_setor'] : null;
-        $this->setor->nome      = (isset($data['setor'])) ? $data['setor'] : null;
-    }
 
     public function getInputFilter()
     {

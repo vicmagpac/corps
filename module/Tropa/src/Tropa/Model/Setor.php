@@ -12,16 +12,7 @@ use Zend\Validator\StringLength;
 
 class Setor extends AbstractModel
 {
-    public $codigo;
-    public $nome;
-
     protected $inputFilter;
-
-    public function exchangeArray(array $data)
-    {
-        $this->codigo   = (isset($data['codigo'])) ? $data['codigo'] : null;
-        $this->nome     = (isset($data['nome'])) ? $data['nome'] : null;
-    }
 
     public function getInputFIlter()
     {
@@ -45,10 +36,5 @@ class Setor extends AbstractModel
         }
 
         return $this->inputFilter;
-    }
-
-    public function getArrayCopy()
-    {
-        return get_object_vars($this);
     }
 }

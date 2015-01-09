@@ -71,13 +71,13 @@ class Module
                 'LanternaTableGateway' => function($sm) {
                     $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
                     $resultSetPrototype = new ResultSet();
-                    $resultSetPrototype->setArrayObjectPrototype(new Lanterna());
+                    $resultSetPrototype->setArrayObjectPrototype(new Lanterna('codigo', 'lanterna', $dbAdapter));
                     return new TableGateway('lanterna', $dbAdapter, null, $resultSetPrototype);
                 },
                 'SetorTableGateway' => function($sm) {
                     $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
                     $resultSetPrototype = new ResultSet();
-                    $resultSetPrototype->setArrayObjectPrototype(new Setor());
+                    $resultSetPrototype->setArrayObjectPrototype(new Setor('codigo', 'setor', $dbAdapter));
                     return new TableGateway('setor', $dbAdapter, null, $resultSetPrototype);
                 }
             )

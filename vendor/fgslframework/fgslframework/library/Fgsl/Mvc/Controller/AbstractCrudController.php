@@ -4,6 +4,7 @@ namespace Fgsl\Mvc\Controller;
 
 use Fgsl\Model\AbstractModel;
 use Zend\Form\Form;
+use Zend\Form\FormInterface;
 use Zend\Mvc\Controller\AbstractActionController;
 use Zend\Paginator\Adapter\DbSelect;
 use Zend\Paginator\Paginator;
@@ -54,7 +55,12 @@ abstract class AbstractCrudController extends AbstractActionController
     public function addAction()
     {
         $modelClass = $this->modelClass;
-        $model = new $modelClass();
+        $model = new $modelClass(
+            $this->getTableGateway()->getPrimaryKey(),
+            $this->getTableGateway()->getTable(),
+            $this->getTableGateway()->getAdapter(),
+            false
+        );
 
         $formClass = $this->formClass;
         $form = new $formClass();
@@ -125,7 +131,11 @@ abstract class AbstractCrudController extends AbstractActionController
 
             if ($form->isValid()) {
 
-                $this->getTableGateway()->save($form->getData());
+                $data = $form->getData(FormInterface::VALUES_AS_ARRAY);
+                unset($data['submit']);
+
+                $model->populate($data, $key !== null);
+                $model->save();
 
                 return $this->Redirect()->toRoute($this->route);
             }
