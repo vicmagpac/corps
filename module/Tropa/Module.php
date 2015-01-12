@@ -9,18 +9,27 @@
 
 namespace Tropa;
 
+use Doctrine\Common\Annotations\AnnotationReader;
+use Doctrine\Common\Annotations\AnnotationRegistry;
+use Doctrine\Common\Cache\ArrayCache;
+use Doctrine\ORM\Configuration;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Mapping\Driver\AnnotationDriver;
 use Tropa\Model\Lanterna;
 use Tropa\Model\LanternaTable;
 use Tropa\Model\Setor;
 use Tropa\Model\SetorTable;
 use Zend\Db\ResultSet\ResultSet;
 use Zend\Db\TableGateway\TableGateway;
+use Zend\Filter\RealPath;
 use Zend\Mvc\ModuleRouteListener;
 use Zend\Mvc\MvcEvent;
 use Zend\Validator\AbstractValidator;
 
 class Module
 {
+    const DOCTRINE_BASE_PATH = '/../../vendor/doctrine/orm/lib/Doctrine';
+
     public function onBootstrap(MvcEvent $e)
     {
         $eventManager        = $e->getApplication()->getEventManager();
@@ -35,6 +44,9 @@ class Module
         AbstractValidator::setDefaultTranslator($translator);
 
         $GLOBALS['sm'] = $e->getApplication()->getServiceManager();
+
+        // inicializando o doctrine
+        $this->initializeDoctrine2($e);
     }
 
     public function getConfig()
@@ -48,39 +60,41 @@ class Module
             'Zend\Loader\StandardAutoloader' => array(
                 'namespaces' => array(
                     __NAMESPACE__ => __DIR__ . '/src/' . __NAMESPACE__,
-                    'Fgsl' => realpath(__DIR__ . '/../../vendor/fgslframework/fgslframework/library/Fgsl')
+                    'Fgsl' => realpath(__DIR__ . '/../../vendor/fgslframework/fgslframework/library/Fgsl'),
+                    'Doctrine\Common' => realpath(__DIR__ . self::DOCTRINE_BASE_PATH . '/Common'),
+                    'Doctrine\DBAL'   => realpath(__DIR__ . self::DOCTRINE_BASE_PATH . '/DBAL'),
+                    'Doctrine\ORM'    => realpath(__DIR__ . self::DOCTRINE_BASE_PATH . '/ORM')
                 ),
             ),
         );
     }
 
-    public function getServiceConfig()
+    private function getDoctrine2Config($e)
     {
-        return array(
-            'factories' => array(
-                'Tropa\Model\LanternaTable' => function($sm) {
-                    $tableGateway = $sm->get('LanternaTableGateway');
-                    $table = new LanternaTable($tableGateway);
-                    return $table;
-                },
-                'Tropa\Model\SetorTable' => function($sm) {
-                    $tableGateway = $sm->get('SetorTableGateway');
-                    $table = new SetorTable($tableGateway);
-                    return $table;
-                },
-                'LanternaTableGateway' => function($sm) {
-                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
-                    $resultSetPrototype = new ResultSet();
-                    $resultSetPrototype->setArrayObjectPrototype(new Lanterna('codigo', 'lanterna', $dbAdapter));
-                    return new TableGateway('lanterna', $dbAdapter, null, $resultSetPrototype);
-                },
-                'SetorTableGateway' => function($sm) {
-                    $dbAdapter = $sm->get('Zend\Db\Adapter\Adapter');
-                    $resultSetPrototype = new ResultSet();
-                    $resultSetPrototype->setArrayObjectPrototype(new Setor('codigo', 'setor', $dbAdapter));
-                    return new TableGateway('setor', $dbAdapter, null, $resultSetPrototype);
-                }
-            )
+        $config = $e->getApplication()->getConfig();
+        return $config['doctrine_config'];
+    }
+
+    private function initializeDoctrine2($e)
+    {
+        $conn = $this->getDoctrine2Config($e);
+        $config = new Configuration();
+        $cache = new ArrayCache();
+
+        $config->setMetadataCacheImpl($cache);
+
+        $annotationPath = realpath(__DIR__ . self::DOCTRINE_BASE_PATH . '/ORM/Mapping/Driver/DoctrineAnnotations.php');
+        AnnotationRegistry::registerFile($annotationPath);
+
+        $driver = new AnnotationDriver(
+            new AnnotationReader(),
+            array(__DIR__ . '/src/Tropa/Model')
         );
+        $config->setMetadataDriverImpl($driver);
+        $config->setProxyDir(__DIR__ . '/src/Tropa/Proxy');
+        $config->setProxyNamespace('Tropa\Proxy');
+
+        $entityManager = EntityManager::create($conn, $config);
+        $GLOBALS['entityManager'] = $entityManager;
     }
 }

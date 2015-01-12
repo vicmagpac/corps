@@ -2,7 +2,8 @@
 
 namespace Tropa\Model;
 
-use Fgsl\Model\AbstractModel;
+use Doctrine\ORM\Mapping as ORM;
+use Fgsl\Entity\AbstractEntity;
 use Fgsl\InputFilter\InputFilter;
 use Zend\Filter\Int;
 use Zend\Filter\StringTrim;
@@ -10,9 +11,81 @@ use Zend\Filter\StripTags;
 use Zend\Validator\StringLength;
 use Zend\Validator\Digits;
 
-class Lanterna extends AbstractModel
+/**
+ * @ORM\Entity
+ * @ORM\Table(name="lanterna")
+ */
+class Lanterna extends AbstractEntity
 {
+    /**
+     * @ORM\Id
+     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    private $codigo;
+
+    /**
+     * @ORM\Column(type="string")
+     */
+    private $nome;
+
+    /**
+     * @ORM\OneToOne(targetEntity="Setor")
+     * @ORM\JoinColumn(name="codigo_Setor", referencedColumnName="codigo")
+     */
+    private $setor;
+
     protected $inputFilter;
+
+    public function getCodigo()
+    {
+        return $this->codigo;
+    }
+
+    public function setCodigo($codigo)
+    {
+        $this->codigo = $codigo;
+    }
+
+    public function getNome()
+    {
+        return $this->nome;
+    }
+
+    public function setNome($nome)
+    {
+        $this->nome = $nome;
+    }
+
+    public function getSetor()
+    {
+        return $this->setor;
+    }
+
+    public function setSetor($setor)
+    {
+        $this->setor = $setor;
+    }
+
+    public function exchangeArray($data)
+    {
+        if (is_array($data)) {
+            $this->codigo   = $data['codigo'];
+            $this->nome     = $data['nome'];
+
+            $em = $GLOBALS['entityManager'];
+            $this->setor = $em->getRepository('Tropa\Model\Setor')->find($data['codigo_Setor']);
+        } else {
+            $this->codigo   = $data->codigo;
+            $this->nome     = $data->nome;
+            $this->Setor    = $data->setor;
+        }
+    }
+
+    public function getArrayCopy()
+    {
+        return get_object_vars($this);
+    }
 
     public function getInputFilter()
     {

@@ -2,13 +2,31 @@
 
 namespace Application\Model;
 
-use Zend\Authentication\Adapter;
-USE Zend\Authentication\Adapter\DbTable;
+use Doctrine\ORM\Mapping as ORM;
+use Fgsl\Authentication\Adapter\DoctrineTable;
 use Zend\Authentication\AuthenticationService;
 
+/**
+ * @ORM\Entity
+ * @ORM\Table(name="usuarios")
+ */
 class Usuario
 {
+    /**
+     * @ORM\Id
+     * @ORM\Column(type="integer")
+     * @ORM\GeneratedValue(strategy="AUTO")
+     */
+    private $uid;
+
+    /**
+     * @ORM\Column(type="string")
+     */
     private $identidade;
+
+    /**
+     * @ORM\Column(type="string")
+     */
     private $credencial;
 
     public $messages = array();
@@ -22,9 +40,8 @@ class Usuario
     public function authenticate($sm)
     {
         // cria o adaptador para o mecanismo contra o qual se ferá a autenticação
-        $zendDb = $sm->get('Zend\Db\Adapter\Adapter');
-        $adapter = new DbTable($zendDb);
-        $adapter->setTableName('usuarios')
+        $adapter = new DoctrineTable($GLOBALS['entityManager']);
+        $adapter->setEntityName(__CLASS__)
                 ->setIdentityColumn('identidade')->setIdentity($this->identidade)
                 ->setCredentialColumn('credencial')->setCredential($this->credencial);
 

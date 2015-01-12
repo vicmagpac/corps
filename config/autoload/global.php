@@ -12,15 +12,15 @@
  */
 
 return array(
-    'db' => array(
-        'driver' => 'Pdo',
-        'dsn'   => 'mysql:dbname=corps;hostname=localhost',
-
+    'doctrine_config' => array(
+        'driver'    => 'pdo_mysql',
+        'user'      => 'root',
+        'password'  => 'victor81854778',
+        'dbname'    => 'corps'
     ),
     'service_manager' => array(
         'factories' => array(
-            'Zend\Db\Adapter\Adapter' => 'Zend\Db\Adapter\AdapterServiceFactory',
-            'Navigation'              => 'Zend\Navigation\Service\DefaultNavigationFactory'
+            'Navigation' => 'Zend\Navigation\Service\DefaultNavigationFactory'
         )
     ),
     'navigation' => array(

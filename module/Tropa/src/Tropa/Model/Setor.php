@@ -2,17 +2,57 @@
 
 namespace Tropa\Model;
 
+use Doctrine\ORM\Mapping as ORM;
 use Fgsl\InputFilter\InputFilter;
-use Fgsl\Model\AbstractModel;
+use Fgsl\Entity\AbstractEntity;
 use Zend\Filter\Int;
 use Zend\Filter\StringTrim;
 use Zend\Filter\StripTags;
 use Zend\Validator\Between;
 use Zend\Validator\StringLength;
 
-class Setor extends AbstractModel
+/**
+ * @ORM\Entity
+ * @ORM\Table(name="setor")
+ */
+class Setor extends AbstractEntity
 {
+    /**
+     * @ORM\Id @ORM\Column(type="integer")
+     */
+    public $codigo;
+
+    /**
+     * @ORM\Column(type="string")
+     */
+    public $nome;
+
     protected $inputFilter;
+
+    public function getNome()
+    {
+        return $this->nome;
+    }
+
+    public function setNome($nome)
+    {
+        $this->nome = $nome;
+    }
+
+    public function getCodigo()
+    {
+        return $this->codigo;
+    }
+
+    public function setCodigo($codigo)
+    {
+        $this->codigo = $codigo;
+    }
+
+    public function getArrayCopy()
+    {
+        return get_object_vars($this);
+    }
 
     public function getInputFIlter()
     {
