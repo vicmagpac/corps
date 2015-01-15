@@ -21,19 +21,13 @@ class LanternaForm extends AbstractForm
 
     }
 
-    private function getSetorTable()
-    {
-        if (!$this->setorTable) {
-            $sm = $GLOBALS['sm'];
-            $this->setorTable = $sm->get('Tropa\Model\SetorTable');
-        }
-        return $this->setorTable;
-    }
-
     private function getValueOptions()
     {
         $valueOptions = array();
-        $setores = $this->getSetorTable()->fetchAll();
+        $dql = "select s from Tropa\Model\Setor s";
+        $em = $GLOBALS['entityManager'];
+        $query = $em->createQuery($dql);
+        $setores = $query->getResult();
 
         foreach ($setores as $setor) {
             $valueOptions[$setor->codigo] = $setor->nome;

@@ -9,9 +9,9 @@
 
 namespace Tropa\Controller;
 
-use Fgsl\Mvc\Controller\AbstractCrudController;
+use Fgsl\Mvc\Controller\AbstractDoctrineCrudController;
 
-class SetorController extends AbstractCrudController
+class SetorController extends AbstractDoctrineCrudController
 {
     public function __construct()
     {

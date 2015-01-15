@@ -2,9 +2,9 @@
 
 namespace Tropa\Controller;
 
-use Fgsl\Mvc\Controller\AbstractCrudController;
+use Fgsl\Mvc\Controller\AbstractDoctrineCrudController;
 
-class LanternaController extends AbstractCrudController
+class LanternaController extends AbstractDoctrineCrudController
 {
     public function __construct()
     {
@@ -22,9 +22,17 @@ class LanternaController extends AbstractCrudController
     public function indexAction()
     {
         $viewModel = parent::indexAction();
-        $urlHomepage = $this->url()->fromRoute('application', array('controller' => 'index', 'action' => 'menu'));
+        $urlHomepage = $this->url()->fromRoute('application', array(
+            'controller' => 'index',
+            'action'     => 'menu')
+        );
 
         $viewModel->setVariable('urlHomepage', $urlHomepage);
+
+        // sem essa consulta o proxy não retornará o relacionamento
+        $em = $GLOBALS['entityManager'];
+        $em->getRepository('Tropa\Model\Setor')->findAll();
+
         return $viewModel;
     }
 }

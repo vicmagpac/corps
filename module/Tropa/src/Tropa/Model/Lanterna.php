@@ -22,18 +22,18 @@ class Lanterna extends AbstractEntity
      * @ORM\Column(type="integer")
      * @ORM\GeneratedValue(strategy="AUTO")
      */
-    private $codigo;
+    public $codigo;
 
     /**
      * @ORM\Column(type="string")
      */
-    private $nome;
+    public $nome;
 
     /**
      * @ORM\OneToOne(targetEntity="Setor")
      * @ORM\JoinColumn(name="codigo_Setor", referencedColumnName="codigo")
      */
-    private $setor;
+    public $setor;
 
     protected $inputFilter;
 
@@ -74,11 +74,11 @@ class Lanterna extends AbstractEntity
             $this->nome     = $data['nome'];
 
             $em = $GLOBALS['entityManager'];
-            $this->setor = $em->getRepository('Tropa\Model\Setor')->find($data['codigo_Setor']);
+            $this->setor = $em->getRepository('Tropa\Model\Setor')->find($data['codigo_setor']);
         } else {
             $this->codigo   = $data->codigo;
             $this->nome     = $data->nome;
-            $this->Setor    = $data->setor;
+            $this->setor    = $data->setor;
         }
     }
 
